@@ -5,12 +5,24 @@ import { View, Text, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
+import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
+
 export const LoadingScreen = () => {
   const nav = useNavigation<NativeStackNavigationProp<any>>();
 
+  function onAuthStateChanges(user: FirebaseAuthTypes.User | null){
+    setTimeout(() => {
+      if(user){
+        nav.replace("Main")
+      } else {
+        nav.replace("Login")
+      }
+    }, 1000)
+  }
+
   useEffect(() => {
-    nav.replace("Login");
-    // Login Decision Logic Here
+    const sub = auth().onAuthStateChanged(onAuthStateChanges);
+    return sub;
   }, []);
 
   return (
